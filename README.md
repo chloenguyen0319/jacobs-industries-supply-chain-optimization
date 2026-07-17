@@ -29,7 +29,13 @@ what factory/warehouse/inventory setup - to maximize cash by the end date?**
 - **EOQ** - optimal production batch sizing
 - **Reorder point with safety stock**, sized using a **newsvendor / critical
   ratio service level** (balances lost-sale cost against holding cost, rather
-  than assuming an arbitrary fixed service level)
+  than assuming an arbitrary fixed service level). ROP is not a one-time,
+  static number - it's recalculated whenever the demand inputs behind it
+  change, e.g. when a region's forecast is revised at a specific point in the
+  game (day 791, day 821), when the model switches to a new
+  average/std-dev-of-demand window (day 820 onward), and during the
+  end-of-life wind-down (ROPs cut by half as demand decays toward the game's
+  end)
 - **Breakeven / net gain analysis** for every warehouse and factory build
   decision
 - **Cash flow feasibility check** for simultaneous infrastructure investment
