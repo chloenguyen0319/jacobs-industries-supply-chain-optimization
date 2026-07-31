@@ -53,45 +53,44 @@ what factory/warehouse/inventory setup - to maximize cash by the end date?**
 ## Repo Structure
 
 ```
-├── data/        raw historical demand data
-├── analysis/    working Excel model (forecasts, EOQ/ROP, breakeven, cash flow)
-├── sql/         SQL work plan - schema, set-based analytics, BI marts
-├── python/      Python work plan - forecasts, EOQ/ROP math, scenarios
-└── docs/        written report / methodology notes
+├── data/       demand_by_region.xlsx / .csv  (historical demand, days 1-730)
+├── analysis/   Excel model (original full solution)
+├── sql/        pgadmin_run_me.sql  (only SQL file - run in pgAdmin 4)
+├── python/     supply_chain_python_work.py  (forecasts, EOQ, ROP, decisions)
+└── docs/       written report
 ```
 
 ## Tools
 
-- **Excel** - original end-to-end model (`analysis/supply-chain-model.xlsx`)
-- **SQL** - data model, demand windows, capacity/breakeven tables, dashboard marts
-  (`sql/supply_chain_sql_work.sql`)
-- **Python** - region forecasts, EOQ / newsvendor ROP, cash-flow scenarios, Excel
-  parity checks (`python/supply_chain_python_work.py`)
-- **Power BI / Tableau** - dashboard (planned after SQL + Python replication)
+- **Excel** - original model (`analysis/supply-chain-model.xlsx`)
+- **SQL (pgAdmin 4)** - one file: `sql/pgadmin_run_me.sql`
+- **Python** - forecasts / EOQ / ROP / build & cash-flow (`python/supply_chain_python_work.py`)
+- **Power BI / Tableau** - dashboard later
 
-## Usage
+## How to replicate the Excel work
 
-### Excel (baseline)
+### A. SQL first (pgAdmin 4) — start from zero (including CSV import)
 
-Open `analysis/supply-chain-model.xlsx` in Excel (or a compatible spreadsheet
-application). The workbook covers all five regions - **Calopeia**, **Sorange**,
-**Tyran**, **Fardo**, and **Entworpe** - with a **Summary** sheet, a
-**Consolidated data** sheet, and per-region detail sheets. Named ranges are
-used throughout (e.g. `SS_Calopeia`, `Holding_cost`, `Cycle_length_Fardo`) to
-make formulas easier to trace back to the **Summary** sheet.
+1. Close any old Query Tool tab, open a new one on your database
+2. **File → Open** → `sql/pgadmin_run_me.sql`
+3. Run **STEP 1** only (highlight → F5) — wipes old tables, creates empty `demand_by_region`
+4. **Load the CSV data** (pick one):
+   - **Recommended:** open `sql/load_demand_by_region.sql` → F5 (loads all 730 rows)
+   - Or use pgAdmin Import/Export on `demand_by_region` with `data/demand_by_region.csv`
+5. Run **STEP 2** — expect `row_count = 730`
+6. Run **STEP 3 → STEP 9** one step at a time
 
-### SQL + Python (replication in progress)
+Note: refreshing the left-panel table list does not load data. Re-run the SELECT after loading.
 
-Both files are beginner-friendly step-by-step checklists. Do the steps in order.
+### B. Python next (math that Excel did)
 
-| File | Role |
-|---|---|
-| `sql/supply_chain_sql_work.sql` | Tables, load demand, averages by day/phase, store results, dashboard views later |
-| `python/supply_chain_python_work.py` | Read Excel, forecasts, EOQ/ROP math, build & cash-flow decisions, save CSV for SQL |
+Open `python/supply_chain_python_work.py` and implement steps in order:
+forecasts → EOQ/ROP → capacity → build decisions → cash flow → save results
+back into the SQL tables (`forecast_daily`, `inventory_policy`, `build_decisions`).
 
-Only **demand history** starts from `data/demand_by_region.xlsx`. Costs and game-day rules come from the Excel Summary / scenario rules.
+### C. Dashboard later
 
-Dashboard work (Power BI or Tableau) starts after SQL + Python can match the Excel Summary outputs.
+Power BI or Tableau on the SQL tables/views after A + B match Excel.
 
 ## Acknowledgments & License
 

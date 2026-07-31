@@ -15,7 +15,7 @@ WHAT PYTHON IS GOOD AT HERE
 
 WHAT SQL DOES INSTEAD
   Storing tables, adding up demand by day/phase, dashboard views.
-  See: sql/supply_chain_sql_work.sql
+  See: sql/pgadmin_run_me.sql
 
 IMPORTANT: where data comes from
   - Historical demand  -> data/demand_by_region.xlsx   (days 1-730 only)
@@ -298,7 +298,7 @@ def step11_save_outputs(forecast, rop_table, build_decisions):
       forecast_daily.csv
       inventory_policy.csv
       build_decisions.csv
-    Column names should match sql/supply_chain_sql_work.sql tables.
+    Column names should match the tables in sql/pgadmin_run_me.sql.
     """
     raise NotImplementedError("Fill in Step 11")
 
@@ -350,7 +350,7 @@ def main():
         print(f"  Day {day}: {action}")
     print()
     print("SQL companion file:")
-    print(f"  {PROJECT_ROOT / 'sql' / 'supply_chain_sql_work.sql'}")
+    print(f"  {PROJECT_ROOT / 'sql' / 'pgadmin_run_me.sql'}")
 
 
 if __name__ == "__main__":
