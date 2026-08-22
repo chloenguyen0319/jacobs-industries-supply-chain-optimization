@@ -11,6 +11,20 @@ with demand decaying to zero in the final 30 days before that.
 This project answers: **which new markets should Jacobs enter, when, and with
 what factory/warehouse/inventory setup - to maximize cash by the end date?**
 
+## Project Status
+
+| Component | Status |
+|---|---|
+| Excel model (`analysis/supply-chain-model.xlsx`) | Complete |
+| Written report (`docs/Jacobs-Industries-Supply-Chain-Report.pdf`) | Complete |
+| SQL pipeline (`sql/`) | Coming soon |
+| Python replication (`python/`) | Coming soon |
+| Dashboard (Power BI / Tableau) | Planned |
+
+The current source of truth is the Excel workbook and business report. SQL and
+Python will replicate that analysis for reproducibility and downstream
+dashboarding.
+
 ## Key Decisions Analyzed
 
 - Which markets to serve, and when to start
@@ -53,44 +67,49 @@ what factory/warehouse/inventory setup - to maximize cash by the end date?**
 ## Repo Structure
 
 ```
-├── data/       demand_by_region.xlsx / .csv  (historical demand, days 1-730)
-├── analysis/   Excel model (original full solution)
-├── sql/        pgadmin_run_me.sql  (only SQL file - run in pgAdmin 4)
-├── python/     supply_chain_python_work.py  (forecasts, EOQ, ROP, decisions)
-└── docs/       written report
+├── data/       demand_by_region.csv  (historical demand, days 1-730)
+├── analysis/   Excel model (complete — full solution)
+├── docs/       written report (complete)
+├── sql/        PostgreSQL pipeline (coming soon)
+└── python/     Python replication of Excel logic (coming soon)
 ```
 
 ## Tools
 
-- **Excel** - original model (`analysis/supply-chain-model.xlsx`)
-- **SQL (pgAdmin 4)** - one file: `sql/pgadmin_run_me.sql`
-- **Python** - forecasts / EOQ / ROP / build & cash-flow (`python/supply_chain_python_work.py`)
-- **Power BI / Tableau** - dashboard later
+- **Excel** — complete model (`analysis/supply-chain-model.xlsx`)
+- **SQL (pgAdmin 4 / PostgreSQL)** — coming soon (`sql/`)
+- **Python** — coming soon (`python/`)
+- **Power BI / Tableau** — planned after SQL + Python
 
-## How to replicate the Excel work
+## How to use this repo
 
-### A. SQL first (pgAdmin 4) — start from zero (including CSV import)
+### A. Review the completed analysis (available now)
 
-1. Close any old Query Tool tab, open a new one on your database
-2. **File → Open** → `sql/pgadmin_run_me.sql`
-3. Run **STEP 1** only (highlight → F5) — wipes old tables, creates empty `demand_by_region`
-4. **Load the CSV data** (pick one):
-   - **Recommended:** open `sql/load_demand_by_region.sql` → F5 (loads all 730 rows)
-   - Or use pgAdmin Import/Export on `demand_by_region` with `data/demand_by_region.csv`
-5. Run **STEP 2** — expect `row_count = 730`
-6. Run **STEP 3 → STEP 9** one step at a time
+1. Open `analysis/supply-chain-model.xlsx` for the full model (forecasts, EOQ/ROP,
+   build decisions, cash flow).
+2. Read `docs/Jacobs-Industries-Supply-Chain-Report.pdf` for the business
+   recommendations and rationale.
+3. Use `data/demand_by_region.csv` for the underlying historical demand inputs.
 
-Note: refreshing the left-panel table list does not load data. Re-run the SELECT after loading.
+### B. SQL pipeline (coming soon)
 
-### B. Python next (math that Excel did)
+The SQL layer will load demand data into PostgreSQL and expose the same
+calculations as views/tables for querying and dashboarding. Planned files:
 
-Open `python/supply_chain_python_work.py` and implement steps in order:
-forecasts → EOQ/ROP → capacity → build decisions → cash flow → save results
-back into the SQL tables (`forecast_daily`, `inventory_policy`, `build_decisions`).
+- `sql/pgadmin_run_me.sql` — schema, transforms, and step-by-step workflow
+- `sql/load_demand_by_region.sql` — CSV import helper
 
-### C. Dashboard later
+### C. Python replication (coming soon)
 
-Power BI or Tableau on the SQL tables/views after A + B match Excel.
+`python/supply_chain_python_work.py` will mirror the Excel math in code:
+forecasts → EOQ/ROP → capacity → build decisions → cash flow, with results
+written back to SQL tables (`forecast_daily`, `inventory_policy`,
+`build_decisions`).
+
+### D. Dashboard (planned)
+
+Power BI or Tableau on the SQL tables/views once the SQL and Python layers
+match the Excel model.
 
 ## Acknowledgments & License
 
